@@ -12,24 +12,26 @@
 
 # ☂ HOW TO BUILD
 
-## Contributors
+## Contributors (Alphabetical order A-Z)
 
 <a href ="https://github.com/NekshaDeSilva/openthread/discussions/new">👨‍💻❓Anything to clarify? Ask other developers in discussions.🙋‍♀🐍</a>
+
+
 
 <table>
   <tr>
     <td align="left">
-      <a href="https://github.com/NekshaDeSilva">
-        <img src="https://github.com/NekshaDeSilva.png" width="100px;" alt="NekshaDeSilva"/>
+      <a href="https://github.com/dms-menula">
+        <img src="https://github.com/dms-menula.png" width="100px;" alt="NekshaDeSilva"/>
         <br />
-        <sub><b>@NekshaDeSilva</b></sub>
+        <sub><b>@DMS-Menula</b></sub>
       </a>
       <br />
       <i>Bio: Enthusiastic developer building cool stuff on GitHub.</i>
       <table>
         <tr>
           <td>
-            <a href="https://github.com/NekshaDeSilva" title="GitHub">
+            <a href="https://github.com/dms-menula" title="GitHub">
               <img src="https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white" />
             </a>
           </td>
@@ -39,17 +41,15 @@
             </a>
           </td>
           <td>
-            <a href="mailto:hey@nekshavs.tech" title="Email">
-              <img src="https://img.shields.io/badge/-Email-d14836?style=flat&logo=gmail&logoColor=white" />
+            <a href="mailto:YOUR_MAIL" title="Email">
+              <img src="https://img.shields.io/b;dge/-Email-d14836onontyle=flat&logo=gmail&logoColor=white" />
             </a>
           </td>
-        </tr>
+        </tr>,
       </table>
     </td>
   </tr>
 </table>
-
-
 
 <table>
   <tr>
@@ -85,7 +85,38 @@
 </table>
 
 
-
+<table>
+  <tr>
+    <td align="left">
+      <a href="https://github.com/NekshaDeSilva">
+        <img src="https://github.com/NekshaDeSilva.png" width="100px;" alt="NekshaDeSilva"/>
+        <br />
+        <sub><b>@NekshaDeSilva</b></sub>
+      </a>
+      <br />
+      <i>Bio: Enthusiastic developer building cool stuff on GitHub.</i>
+      <table>
+        <tr>
+          <td>
+            <a href="https://github.com/NekshaDeSilva" title="GitHub">
+              <img src="https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white" />
+            </a>
+          </td>
+          <td>
+            <a href="https://twitter.com/YOUR_TWITTER" title="Twitter">
+              <img src="https://img.shields.io/badge/-Twitter-1da1f2?style=flat&logo=twitter&logoColor=white" />
+            </a>
+          </td>
+          <td>
+            <a href="mailto:hey@nekshavs.tech" title="Email">
+              <img src="https://img.shields.io/badge/-Email-d14836?style=flat&logo=gmail&logoColor=white" />
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
 <table>
   <tr>
@@ -123,38 +154,7 @@
 
 
 
-<table>
-  <tr>
-    <td align="left">
-      <a href="https://github.com/dms-menula">
-        <img src="https://github.com/dms-menula.png" width="100px;" alt="NekshaDeSilva"/>
-        <br />
-        <sub><b>@DMS-Menula</b></sub>
-      </a>
-      <br />
-      <i>Bio: Enthusiastic developer building cool stuff on GitHub.</i>
-      <table>
-        <tr>
-          <td>
-            <a href="https://github.com/dms-menula" title="GitHub">
-              <img src="https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white" />
-            </a>
-          </td>
-          <td>
-            <a href="https://twitter.com/YOUR_TWITTER" title="Twitter">
-              <img src="https://img.shields.io/badge/-Twitter-1da1f2?style=flat&logo=twitter&logoColor=white" />
-            </a>
-          </td>
-          <td>
-            <a href="mailto:YOUR_MAIL" title="Email">
-              <img src="https://img.shields.io/b;dge/-Email-d14836onontyle=flat&logo=gmail&logoColor=white" />
-            </a>
-          </td>
-        </tr>,
-      </table>
-    </td>
-  </tr>
-</table>
+
 
 
 # To the contributors:
