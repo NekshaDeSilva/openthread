@@ -1,4 +1,4 @@
-
+## Everyone: Use [discussions](https://github.com/NekshaDeSilva/openthread/discussions/new) for better communication. 
 
 <table border="0">
   <tr>
