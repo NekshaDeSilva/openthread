@@ -1,3 +1,5 @@
+
+
 <table border="0">
   <tr>
     <td>
@@ -239,3 +241,7 @@ Je suis en désaccord avec la gestion de cette situation.
 ![image](https://github.com/user-attachments/assets/6f718c9f-6c60-4805-94cc-96a972a420ca)
 
 <a href ="https://github.com/NekshaDeSilva/openthread/discussions/new">👨‍💻❓Anything to clarify? Ask other developers in discussions.🙋‍♀🐍</a>
+
+
+## Banner image used:
+![openthread](https://github.com/user-attachments/assets/57a13cee-2d86-42ce-bd44-5e4b21e0461b)
