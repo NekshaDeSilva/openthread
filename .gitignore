@@ -1,2 +1,10 @@
+
+#Environment files
 .env
+backend/.env
+storage/.env
+
+#Log files
 Logs
+backend/Logs
+storage/Logs
