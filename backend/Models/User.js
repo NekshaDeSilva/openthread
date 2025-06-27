@@ -2,34 +2,43 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { Log } = require("../Handlers/Logger");
 
-(userSchema = new Schema({
-    id: {type: String, unique: true},
-    username: String,
+const userSchema = new Schema({
+    id: { type: String, unique: true },
+    username: { type: String, unique: true },
     name: String,
-    email: String,
+    email: { type: String, unique: true },
     age: Number,
-    password: String,
+    password: { type: String, minlength: 8 },
     contact: String,
-    joinDate: {type: Date, default: Date.now},
-    admin: {type: Boolean, default: false},
-})),
-    userSchema.pre('save', async function(next) {
-        function ID() {
-            const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result           = '';
-            for (let i = 0; i < 5; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
-        }
-        if (this.isNew) {
-            this.id = ID()
-            Log("New User Created: " + this.id)
-        }else{
-            Log("User Updated: " + this.id);
-        }
-        next();
-    });
-(User = mongoose.model("User", userSchema));
+    joinDate: { type: Date, default: Date.now },
+    admin: { type: Boolean, default: false },
+    bio: { type: String, maxlength: 128 },
+    links: {
+        github: { type: String, maxlength: 128 },
+        linkedin: { type: String, maxlength: 128 },
+        website: { type: String, maxlength: 128 }
+    },
+    avatar: { type: String, default: "" }
+})
 
-module.exports = User;
+userSchema.pre('save', async function (next) {
+    function ID() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < 5; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+    }
+
+    if (this.isNew) {
+        this.id = ID()
+        Log("New User Created: " + this.id)
+    } else {
+        Log("User Updated: " + this.id);
+    }
+
+    next();
+});
+
+module.exports = mongoose.model("User", userSchema);

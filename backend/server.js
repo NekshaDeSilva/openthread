@@ -7,8 +7,9 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")
+const helmet = require("helmet");
 
-mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true, useNewUrlParser: true,})
+mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("Connected to MongoDB")
         Log("Successfully Connected to MongoDB");
@@ -17,25 +18,26 @@ mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true, useNewUrlPar
         Log("An error occurred while connecting to MongoDB: \n" + err);
         process.exit(1);
     });
+
 app.use(
     session({
         secret: "LHDIDH$#%@$^#$^oq$#@%FSDFDSF@$ihvVSFIVHISHI41$#@^#%&#$$@#$JBVVLJSV",
-        resave: true, //Vidul add a .gitignore file and hide .env
+        resave: true,
         saveUninitialized: false,
         store: MongoStore.create({
             mongoUrl: process.env.MONGO_URI,
         }),
         cookie: {
-            maxAge: 1 * 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         }
     })
 );
-
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const index = require("./Routes/Index")
-app.use("/", index);
+app.use("/api", index);
 
 app.use((req, res, next) => {
     res.json({"404": "Not Found"})

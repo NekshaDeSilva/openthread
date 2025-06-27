@@ -1,0 +1,19 @@
+{
+  "name": "storage",
+  "version": "1.0.0",
+  "description": "Storage manager for openthread",
+  "license": "MIT",
+  "author": "vidulhb",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^16.6.0",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "path": "^0.12.7"
+  }
+}
