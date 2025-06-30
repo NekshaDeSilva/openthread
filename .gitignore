@@ -8,3 +8,6 @@ storage/.env
 Logs
 backend/Logs
 storage/Logs
+
+#Webstorm files
+.idea
