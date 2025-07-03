@@ -3,8 +3,18 @@ const express = require("express");
 const router = express.Router();
 const { Log } = require("../Handlers/Logger");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
 
 const User = require("../Models/User");
+const Thread = require("../Models/Thread");
+
+const Authenticated = (req, res, next) => {
+    if (!req.session.userId) {
+        res.status(403).json({message: "Unauthorized"});
+    } else {
+        next();
+    }
+};
 
 router.post("/register", async (req, res, next) => {
     try {
@@ -59,6 +69,9 @@ router.post("/login", async (req, res, next) => {
                 return res.status(400).json({ message: "Invalid Credentials" });
             }
 
+            req.session.user_ID = existingUser.id;
+            req.session.user_Email = existingUser.email;
+            req.session.user_Username = existingUser.username;
             res.status(200).json({
                 user: {
                     _id: existingUser._id,
@@ -81,5 +94,98 @@ router.post("/login", async (req, res, next) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
+
+router.post("/logout", Authenticated, async (req, res, next) => {
+    try {
+        if (req.session.user_ID) {
+            req.session.destroy((err) => {
+                if (err) {
+                    Log("An error occurred while logging out user: \n" + err);
+                    return res.status(500).json({ message: "Internal Server Error" });
+                }
+                res.status(200).json({ message: "Logged out successfully" });
+            });
+        } else {
+            res.status(400).json({ message: "No user is logged in" });
+        }
+    } catch (err) {
+        Log("An error occurred while logging out user: \n" + err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+
+router.post("/post", async (req, res, next) => {
+    try {
+        let { content } = req.body;
+
+        if (content.length > 280) return res.status(400).json({ message: "Content Character Limit Exceeded" });
+        if (!req.session.user_ID) return res.status(401).json({ message: "Unauthorized" });
+
+        let thread = new Thread({
+            user_id: req.session.user_ID,
+            content: content,
+        });
+        await thread.save();
+
+        res.status(200).json({
+            thread: {
+                id: thread.id,
+                userId: req.session.user_ID,
+                content: content,
+            }
+        });
+    } catch (err) {
+        Log("An error occurred while creating a post: \n" + err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+
+router.post("/comment", Authenticated, async (req, res, next) => {
+    try {
+        let { thread_ID, content } = req.body;
+        let thread = await Thread.findOne({ id: thread_ID });
+
+        if (content.length > 280) return res.status(400).json({ message: "Content Character Limit Exceeded" });
+        if (!req.session.user_ID) return res.status(401).json({ message: "Unauthorized" });
+        if (!thread) return res.status(404).json({ message: "Thread Not Found" });
+
+        let comment = Thread.updateOne({ id: thread_ID }, { $push: { comments: { user_id: req.session.user_ID, content: content } }})
+
+        res.status(200).json({
+            comment: {
+                id: comment.id,
+                userId: req.session.user_ID,
+                content: content,
+            }
+        });
+    } catch (err) {
+        Log("An error occurred while creating a post: \n" + err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+
+router.post("/upload", Authenticated, async (req, res, next) => {
+    try{
+        const { dir, name, content } = req.body;
+        if (!dir || !name || !content) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        const storageServerUrl = process.env.STORAGE_SERVER_URL + "/upload";
+        const secretToken = process.env.STORAGE_SECRET_TOKEN;
+
+        const response = await axios.post(
+            storageServerUrl,
+            { dir, name, content },
+            { headers: { "x-upload-secret": secretToken } }
+        );
+
+        res.status(response.status).json(response.data);
+    }catch (err){
+        Log("An error occurred while uploading file: \n" + err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+
 
 module.exports = router;

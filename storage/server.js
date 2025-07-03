@@ -7,8 +7,9 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 
 app.use(helmet());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '10gb' }));
+app.use(bodyParser.urlencoded({ extended: false, limit: '10gb' }));
+app.use(express.static(__dirname + "/Storage_Container"));
 
 const index = require("./Routes/Index")
 app.use("/storage", index);

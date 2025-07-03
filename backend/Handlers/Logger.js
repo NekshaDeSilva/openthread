@@ -6,6 +6,13 @@ function Init() {
     if (!fs.existsSync(logsDir)) {
         fs.mkdirSync(logsDir);
     }
+    fs.readdirSync(logsDir).forEach(file => {
+        const filePath = path.join(logsDir, file);
+        const stats = fs.statSync(filePath);
+        if (stats.isFile() && stats.mtime.getTime() < (Date.now() - 14 * 24 * 60 * 60 * 1000)) {
+            fs.unlinkSync(filePath);
+        }
+    });
     const logEntry = `[${new Date().toISOString().slice(0, 19)}]: Backend Started\n`;
     const date = new Date();
     const IsoString = date.toISOString();
