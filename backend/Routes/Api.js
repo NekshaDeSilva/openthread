@@ -18,6 +18,8 @@ const Authenticated = (req, res, next) => {
 
 router.post("/register", async (req, res, next) => {
     try {
+        if(req.session.user_ID) return res.status(400).json({ message: "Already Authenticated" });
+
         let { username, name, email, age, password, contact } = req.body;
 
         let existingUser = await User.findOne({$or: [{email: email}, {username: username}]})
@@ -60,6 +62,7 @@ router.post("/register", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
     try {
+        if(req.session.user_ID) return res.status(400).json({ message: "Already Authenticated" });
         let { username, password } = req.body;
 
         let existingUser = await User.findOne({$or: [{email: username}, {username: username}]})
@@ -97,7 +100,6 @@ router.post("/login", async (req, res, next) => {
 
 router.post("/logout", Authenticated, async (req, res, next) => {
     try {
-        if (req.session.user_ID) {
             req.session.destroy((err) => {
                 if (err) {
                     Log("An error occurred while logging out user: \n" + err);
@@ -105,21 +107,17 @@ router.post("/logout", Authenticated, async (req, res, next) => {
                 }
                 res.status(200).json({ message: "Logged out successfully" });
             });
-        } else {
-            res.status(400).json({ message: "No user is logged in" });
-        }
     } catch (err) {
         Log("An error occurred while logging out user: \n" + err);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
 
-router.post("/post", async (req, res, next) => {
+router.post("/post", Authenticated, async (req, res, next) => {
     try {
         let { content } = req.body;
 
         if (content.length > 280) return res.status(400).json({ message: "Content Character Limit Exceeded" });
-        if (!req.session.user_ID) return res.status(401).json({ message: "Unauthorized" });
 
         let thread = new Thread({
             user_id: req.session.user_ID,
@@ -135,7 +133,7 @@ router.post("/post", async (req, res, next) => {
             }
         });
     } catch (err) {
-        Log("An error occurred while creating a post: \n" + err);
+        Log("An error occurred while creating a thread: \n" + err);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
@@ -146,20 +144,21 @@ router.post("/comment", Authenticated, async (req, res, next) => {
         let thread = await Thread.findOne({ id: thread_ID });
 
         if (content.length > 280) return res.status(400).json({ message: "Content Character Limit Exceeded" });
-        if (!req.session.user_ID) return res.status(401).json({ message: "Unauthorized" });
         if (!thread) return res.status(404).json({ message: "Thread Not Found" });
 
-        let comment = Thread.updateOne({ id: thread_ID }, { $push: { comments: { user_id: req.session.user_ID, content: content } }})
+        let updatedThread = await Thread.findOneAndUpdate({ id: thread_ID }, { $push: { comments: { user_id: req.session.user_ID, content: content } }},{ new: true })
+
+        const newComment = updatedThread.comments[updatedThread.comments.length - 1];
 
         res.status(200).json({
             comment: {
-                id: comment.id,
+                id: newComment.id,
                 userId: req.session.user_ID,
                 content: content,
             }
         });
     } catch (err) {
-        Log("An error occurred while creating a post: \n" + err);
+        Log("An error occurred while creating a comment: \n" + err);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
@@ -171,7 +170,7 @@ router.post("/upload", Authenticated, async (req, res, next) => {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-        const storageServerUrl = process.env.STORAGE_SERVER_URL + "/upload";
+        const storageServerUrl = process.env.STORAGE_SERVER_URL + "upload";
         const secretToken = process.env.STORAGE_SECRET_TOKEN;
 
         const response = await axios.post(

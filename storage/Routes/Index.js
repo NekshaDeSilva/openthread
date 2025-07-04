@@ -30,7 +30,7 @@ router.post("/upload", async (req, res, next) => {
         fs.writeFileSync(filePath, content);
 
         Log(`File uploaded successfully: ${filePath} from IP: ${ip}`);
-        res.status(200).json({ message: "File uploaded successfully", filePath: path.join(dir, name) });
+        res.status(200).json({ message: "File uploaded successfully", filePath: process.env.URL + path.join(dir, name) });
 
     }catch (err){
         Log("An error occurred while uploading file: \n" + err);
