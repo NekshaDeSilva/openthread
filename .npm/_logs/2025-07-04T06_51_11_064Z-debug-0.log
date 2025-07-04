@@ -1,0 +1,50 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.9.2
+2 info using node@v22.14.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/home/container/.npmrc
+5 silly config load:file:/usr/local/etc/npmrc
+6 verbose title npm install
+7 verbose argv "install"
+8 verbose logfile logs-max:10 dir:/home/container/.npm/_logs/2025-07-04T06_51_11_064Z-
+9 verbose logfile /home/container/.npm/_logs/2025-07-04T06_51_11_064Z-debug-0.log
+10 silly logfile start cleaning logs, removing 1 files
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+13 silly idealTree buildDeps
+14 silly reify moves {}
+15 silly audit bulk request {
+15 silly audit   'ansi-regex': [ '5.0.1' ],
+15 silly audit   'ansi-styles': [ '4.3.0' ],
+15 silly audit   chalk: [ '4.1.2' ],
+15 silly audit   'supports-color': [ '7.2.0', '8.1.1' ],
+15 silly audit   cliui: [ '8.0.1' ],
+15 silly audit   'color-convert': [ '2.0.1' ],
+15 silly audit   'color-name': [ '1.1.4' ],
+15 silly audit   concurrently: [ '9.2.0' ],
+15 silly audit   'emoji-regex': [ '8.0.0' ],
+15 silly audit   escalade: [ '3.2.0' ],
+15 silly audit   'get-caller-file': [ '2.0.5' ],
+15 silly audit   'has-flag': [ '4.0.0' ],
+15 silly audit   'is-fullwidth-code-point': [ '3.0.0' ],
+15 silly audit   lodash: [ '4.17.21' ],
+15 silly audit   'require-directory': [ '2.1.1' ],
+15 silly audit   rxjs: [ '7.8.2' ],
+15 silly audit   'shell-quote': [ '1.8.3' ],
+15 silly audit   'string-width': [ '4.2.3' ],
+15 silly audit   'strip-ansi': [ '6.0.1' ],
+15 silly audit   'tree-kill': [ '1.2.2' ],
+15 silly audit   tslib: [ '2.8.1' ],
+15 silly audit   'wrap-ansi': [ '7.0.0' ],
+15 silly audit   y18n: [ '5.0.8' ],
+15 silly audit   yargs: [ '17.7.2' ],
+15 silly audit   'yargs-parser': [ '21.1.1' ]
+15 silly audit }
+16 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 251ms
+17 silly audit report {}
+18 verbose cwd /home/container
+19 verbose os Linux 6.11.0-1017-gcp
+20 verbose node v22.14.0
+21 verbose npm  v10.9.2
+22 verbose exit 0
+23 info ok

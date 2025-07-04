@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "scripts": {
+    "start": "concurrently 'npm run start:backend' 'npm run start:storage'",
+    "start:backend": "cd backend && npm run start",
+    "start:storage": "cd storage && npm run start"
+  }
+}
