@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { Log } = require("../Handlers/Logger");
-const ID = require("../Handlers/Identifier");
 
 const userSchema = new Schema({
-    id: { type: String, unique: true, default: ID() },
     username: { type: String, unique: true },
     name: String,
     email: { type: String, unique: true },
@@ -24,9 +22,9 @@ const userSchema = new Schema({
 
 userSchema.pre('save', async function (next) {
     if (this.isNew) {
-        Log("New User Created: " + this.id)
+        Log("New User Created: " + this._id)
     } else {
-        Log("User Updated: " + this.id);
+        Log("User Updated: " + this._id);
     }
 
     next();
