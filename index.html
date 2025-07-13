@@ -1,0 +1,104 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenThreads - Share Open-source</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/app.css">
+    <link rel="shortcut icon" href="./assets/openthread_logo_bash-trans.png" type="image/x-icon">
+</head>
+<body data-theme="dark">
+    <div class="wait-box-screen" id="loadingScreen">
+        <div class="wait-time-logo   ">
+            <img style="border-radius: 50%;" src="./assets/openthread_logo_bash-trans.png" alt="OpenThreads" class="wait-time-logo-picture">
+            <div class="wait-time-dots ">
+                <span></span>
+                <span></span>
+                 <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-app-box" id="appContainer" style="opacity: 0;">
+        <!-- Main Content Area -->
+        <div class="center-stuff-content">
+            <div class="post-stream-box">
+                <div class="top-area-header">
+                    <div class="top-stuff-content">
+                        <div class="left-side-header">
+                            <img src="./assets/openthread_logo_bash-trans.png" alt="OpenThreads" class="openthreads-picture-logo">
+                            <h1>OpenThreads</h1>
+                            <img src=".\assets\static\jhgsfhkdsguk.png" alt="image-verified-local" draggable="false" loading="lazy" class="verify-badge-thing">
+                                </div>
+                        <div class="middle-part-header">
+                            <a href="https://github.com/openrockets/openthread" target="_blank" rel="noopener noreferrer" class="github-like-button" title="Star on GitHub">
+                                <i class="bi bi-star"></i>
+                                <span>Star on GitHub</span>
+                            </a><button class="color-mode-button" id="themeToggle" title="Toggle theme">
+                            <i class="bi bi-moon-fill color-switch-icon"></i>
+                        </button>
+                        </div>
+                        
+                    </div>
+                    <div class="page-switch-tabs">
+                        <button class="switch-tab-thing active">Recent</button>
+                            
+                        
+                        <button class="switch-tab-thing">Your Threads</button>
+                    </div>
+                </div>
+                
+                <!-- New Post Creator -->
+                <div class="write-new-thing">
+                    <div class="make-post-area">
+                        <div class="user-face-pic">
+                            <img src="https://www.github.com/openrockets.png" alt="Your avatar">
+                        </div>
+                        <div class="text-write-box">
+                            <div class="type-text-area">
+                            
+                                <textarea placeholder="Is there something new!?" rows="1" id="postTextarea"></textarea>
+                            </div>
+                            <div class="extra-stuff-options">
+                                <div class="add-thing-tools">
+                                    <button class="add-stuff-button" title="Add image">
+                                        <i class="bi bi-image"></i>
+                                    </button>
+                                    <button class="add-stuff-button" title="Add GIF">
+                                        <i class="bi bi-filetype-gif"></i>
+                                    </button>
+                                    <button class="add-stuff-button" title="Add link">
+                                        <i class="bi bi-link-45deg"></i>
+                                    </button>
+                                </div>
+                                <div class="send-post-area">
+                        
+                                    <div class="letter-count-thing">
+                                        <svg class="letter-circle-progress" width="20" height="20">
+                                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" fill="none" 
+                                                stroke-dasharray="50.27" stroke-dashoffset="0" id="charCircle"></circle>
+                                        </svg>
+                                        <span class="number-left-text" id="charCount">280</span>
+                                    </div>
+                                    <button class="send-thread-button" id="postBtn" disabled>
+                                        <i class="bi bi-plus-circle-fill me-1"></i>Thread
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="all-posts-list" id="posts-feed">
+                    <!-- Appear of posts see index.js -->
+                    </div>
+            </div>  
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/index.js"></script>
+</body>
+</html>
