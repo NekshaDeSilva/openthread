@@ -1,86 +1,214 @@
-const posts = [
-    {
-        id: 1,
-        username: "Neksha DeSilva",
-        handle: "@nekshavs",
-        avatar: "https://www.github.com/nekshadesilva.png",
-        time: "2h",
-        content: "Just deployed our new quantum computing simulation framework! 🚀 The intersection of classical algorithms and quantum mechanics continues to blow my mind. Open source is the future of scientific computing.",
-        hashtags: ["#QuantumComputing", "#OpenSource", "#Science"],
-        likes: 342,
-        replies: 67,
-        reposts: 89,
-        verified: false
-    },
-    {
-        id: 2,
-        username: "TheLadyADA",
-        handle: "@ladyada",
-        avatar: "https://www.github.com/ladyada.png",
-        time: "4h",
-        content: "Building distributed systems that can handle millions of requests per second isn't just about the code—it's about understanding the psychology of data flow. Every byte has a story. 📊",
-        hashtags: ["#DistributedSystems", "#CloudComputing", "#Performance"],
-        likes: 156,
-        replies: 42,
-        reposts: 23,
-        verified:true
-    },
-    {
-        id: 3,
-        username: "SinDre",
-        handle: "@sindresorhus",
-        avatar: "https://www.github.com/sindresorhus.png",
-        time: "6h",
-        content: "The beauty of functional programming isn't in its syntax—it's in how it teaches you to think about problems as transformations rather than mutations. Pure functions, pure thoughts. ✨",
-        hashtags: ["#FunctionalProgramming", "#CleanCode", "#Philosophy"],
-        likes: 289,
-        replies: 78,
-        reposts: 145,
-        verified:true
-    },
-    {
-        id: 4,
-        username: "Linus Torvalds",
-        handle: "@torwalds",
-        avatar: "https://www.github.com/torwalds.png",
-        time: "8h",
-        content: "Machine learning models are like digital dreams—they see patterns we never knew existed. Today's breakthrough: our AI can now predict code bugs before they're written. The future is collaborative intelligence. 🤖",
-        hashtags: ["#MachineLearning", "#AI", "#CodeAnalysis"],
-        likes: 521,
-        replies: 134,
-        reposts: 267,
-        verified: true
-    },
-    {
-        id: 5,
-        username: "OpenRockets OSS",
-        handle: "@OpenRockets",
-        avatar: "https://www.github.com/openrockets.png",
-        time: "12h",
-        content: "Decentralization isn't just a technology—it's a philosophy of empowerment. Every smart contract we write is a small step toward a more transparent world. Building the infrastructure of tomorrow, one block at a time. 🔗",
-        hashtags: ["#Blockchain", "#DeFi", "#Web3"],
-        likes: 403,
-        replies: 98,
-        reposts: 187,
-        verified: true
-    }
-];
-
 class OpenThreadsApp {
-    constructor(   ){
+    user = null;
+    isAnonymous = false;
+    oprcId = null;
+
+    selectedMedia = null;
+    selectedGif = null;
+    links = [];
+    constructor(){
         this.currentTheme=localStorage.getItem('theme')||'dark';
         this.maxChars=280;
-        this.init( );
+        this.init();
     }
 
-    init(   ){
+
+
+    async init(){
         this.setTheme(this.currentTheme);
-        this.showLoadingScreen( );
-        this.setupEventListeners( );
-        setTimeout(()=>{
+        this.showLoadingScreen();
+        this.setupOPRC();
+        this.setupAuthModal();
+        this.setupEventListeners();
+        try {
+            await this.checkAuth();
+            await this.fetchAndRenderPosts();
+        } catch (err) {
+            // Optionally log error
+        } finally {
             this.hideLoadingScreen();
-            this.renderPosts( );
-        },2000);
+            // Always show app container after loading
+            const appContainer = document.getElementById('appContainer');
+            if (appContainer) {
+                appContainer.style.display = 'block';
+                appContainer.style.opacity = '1';
+            }
+        }
+    }
+
+    setupOPRC(){
+        let id=localStorage.getItem('OPRC_id');
+        if(!id){
+            id='oprc_'+Math.random().toString(36).slice(2)+Date.now();
+            localStorage.setItem('OPRC_id',id);
+        }
+        this.oprcId=id;
+    }
+
+    setupAuthModal(){
+        const authModal=document.getElementById('authModal');
+        const showLogin=document.getElementById('showLogin');
+        const showRegister=document.getElementById('showRegister');
+        const loginForm=document.getElementById('loginForm');
+        const registerForm=document.getElementById('registerForm');
+        showLogin.onclick=()=>{
+            showLogin.classList.add('active');
+            showRegister.classList.remove('active');
+            loginForm.style.display='flex';
+            registerForm.style.display='none';
+        };
+        showRegister.onclick=()=>{
+            showRegister.classList.add('active');
+            showLogin.classList.remove('active');
+            loginForm.style.display='none';
+            registerForm.style.display='flex';
+        };
+        loginForm.onsubmit=async(e)=>{
+            e.preventDefault();
+            const username=document.getElementById('loginUsername').value.trim();
+            const password=document.getElementById('loginPassword').value;
+            const error=document.getElementById('loginError');
+            error.textContent='';
+            const res=await fetch('/api/login',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({username,password})
+            });
+            if(res.ok){
+                await this.checkAuth();
+                authModal.style.display='none';
+                await this.fetchAndRenderPosts();
+            }else{
+                const data=await res.json();
+                error.textContent=data.message||'Login failed';
+            }
+        };
+        registerForm.onsubmit=async(e)=>{
+            e.preventDefault();
+            const username=document.getElementById('registerUsername').value.trim();
+            const name=document.getElementById('registerName').value.trim();
+            const email=document.getElementById('registerEmail').value.trim();
+            const age=document.getElementById('registerAge').value;
+            const password=document.getElementById('registerPassword').value;
+            const contact=document.getElementById('registerContact').value.trim();
+            const error=document.getElementById('registerError');
+            error.textContent='';
+            const res=await fetch('/api/register',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({username,name,email,age,password,contact})
+            });
+            if(res.ok){
+                await this.checkAuth();
+                authModal.style.display='none';
+                await this.fetchAndRenderPosts();
+            }else{
+                const data=await res.json();
+                error.textContent=data.message||'Registration failed';
+            }
+        };
+    }
+
+    async checkAuth(){
+        try{
+            const res=await fetch('/api/me');
+            if(res.ok){
+                const data=await res.json();
+                this.user=data.user;
+                this.isAnonymous=false;
+                this.setAuthUI(true);
+            }else{
+                this.user=null;
+                this.isAnonymous=true;
+                this.setAuthUI(false);
+            }
+        }catch{
+            this.user=null;
+            this.isAnonymous=true;
+            this.setAuthUI(false);
+        }
+    }
+
+    setAuthUI(isLoggedIn){
+        const authModal=document.getElementById('authModal');
+        const appContainer=document.getElementById('appContainer');
+        if(isLoggedIn){
+            authModal.style.display='none';
+            appContainer.style.display='block';
+        }else{
+            authModal.style.display='none';
+            appContainer.style.display='block';
+        }
+    }
+
+    async logout(){
+        await fetch('/api/logout',{method:'POST'});
+        this.user=null;
+        this.setAuthUI(false);
+        await this.fetchAndRenderPosts();
+    }
+
+    async fetchAndRenderPosts(tab = 'recent') {
+        const postsContainer = document.getElementById('posts-feed');
+        const skeleton = document.getElementById('skeletonLoader');
+        const tabSpinners = document.querySelectorAll('.tab-loader');
+        if (!postsContainer) return;
+        postsContainer.innerHTML = '';
+        skeleton.style.display = 'flex';
+        tabSpinners.forEach(spinner => spinner.style.display = 'none');
+        const activeTab = document.querySelector(`.switch-tab-thing[data-tab="${tab}"]`);
+        const activeSpinner = activeTab?.querySelector('.tab-loader');
+        if (activeSpinner) activeSpinner.style.display = 'inline-flex';
+        let data = null;
+        let threads = [];
+        try {
+            const res = await fetch('/api/posts');
+            if (!res.ok) throw new Error('Failed to fetch posts');
+            data = await res.json();
+            threads = data.threads || [];
+        } catch (err) {
+            // Show error message in feed
+            postsContainer.innerHTML = '<div class="feed-error">Failed to load posts. Please try again later.</div>';
+        } finally {
+            skeleton.style.display = 'none';
+            if (activeSpinner) activeSpinner.style.display = 'none';
+        }
+        if (!threads.length) return;
+        for (const thread of threads) {
+            const user = await this.fetchUser(thread.user_ID);
+            const postData = {
+                id: thread._id,
+                username: user?.name || 'User',
+                handle: user ? ('@' + user.username) : '@user',
+                avatar: user?.avatar || 'https://www.github.com/openrockets.png',
+                time: this.timeAgo(thread.date),
+                content: thread.content,
+                hashtags: thread.hashtags,
+                likes: thread.likes?.number || 0,
+                replies: thread.comments?.length || 0,
+                reposts: thread.reposts?.number || 0,
+                verified: user?.admin || false
+            };
+            const postElement = this.createPost(postData, thread);
+            postsContainer.appendChild(postElement);
+        }
+    }
+
+    async fetchUser(userId){
+        const res=await fetch('/api/user/'+userId);
+        if(!res.ok)return null;
+        const data=await res.json();
+        return data.user;
+    }
+
+    timeAgo(dateStr){
+        const date=new Date(dateStr);
+        const now=new Date();
+        const diff=Math.floor((now-date)/1000);
+        if(diff<60)return 'now';
+        if(diff<3600)return Math.floor(diff/60)+'m';
+        if(diff<86400)return Math.floor(diff/3600)+'h';
+        return Math.floor(diff/86400)+'d';
     }
 
     showLoadingScreen( ){
@@ -138,9 +266,144 @@ class OpenThreadsApp {
         feedTabs.forEach(tab=>{
             tab.addEventListener('click',(e)=>{
                 feedTabs.forEach(t=>t.classList.remove('active'));
-                e.target.classList.add('active');
+                tab.classList.add('active');
+                const tabType = tab.getAttribute('data-tab') || 'recent';
+                this.fetchAndRenderPosts(tabType);
             });
         });
+
+        // Media, GIF, Link picker logic
+        const addImageBtn = document.getElementById('media-picker-btn');
+        const addGifBtn = document.getElementById('gif-picker-btn');
+        const addLinkBtn = document.getElementById('link-picker-btn');
+        const mediaPickerModal = document.getElementById('media-picker-modal');
+        const gifPickerModal = document.getElementById('gif-picker-modal');
+        const linkPickerModal = document.getElementById('link-picker-modal');
+        const mediaDropZone = document.getElementById('media-drop-zone');
+        const mediaInput = document.getElementById('media-input');
+        const gifSearchInput = document.getElementById('gif-search-input');
+        const gifResults = document.getElementById('gif-results');
+        const linkUrlInput = document.getElementById('link-url-input');
+        const linkTextInput = document.getElementById('link-text-input');
+        const linkAddBtn = document.getElementById('link-add-btn');
+        const linkList = document.getElementById('link-list');
+
+        addImageBtn?.addEventListener('click', () => {
+            mediaPickerModal.style.display = 'block';
+        });
+        addGifBtn?.addEventListener('click', () => {
+            gifPickerModal.style.display = 'block';
+        });
+        addLinkBtn?.addEventListener('click', () => {
+            linkPickerModal.style.display = 'block';
+        });
+
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.onclick = () => {
+                btn.closest('.modal').style.display = 'none';
+            };
+        });
+
+        mediaDropZone.ondragover = e => {
+            e.preventDefault();
+            mediaDropZone.classList.add('dragover');
+        };
+        mediaDropZone.ondragleave = () => {
+            mediaDropZone.classList.remove('dragover');
+        };
+        mediaDropZone.ondrop = e => {
+            e.preventDefault();
+            mediaDropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                this.selectedMedia = file;
+                this.selectedGif = null;
+                this.showMediaPreview(file);
+                mediaPickerModal.style.display = 'none';
+            }
+        };
+        mediaInput.onchange = e => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                this.selectedMedia = file;
+                this.selectedGif = null;
+                this.showMediaPreview(file);
+                mediaPickerModal.style.display = 'none';
+            }
+        };
+        gifSearchInput.oninput = async e => {
+            const q = e.target.value.trim();
+            if (!q) return;
+            gifResults.innerHTML = '<div class="spinner"></div>';
+            const res = await fetch(`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(q)}&key=LIVDSRZULELA&limit=10`);
+            const data = await res.json();
+            gifResults.innerHTML = '';
+            data.results.forEach(gif => {
+                const img = document.createElement('img');
+                img.src = gif.media_formats.gif.url;
+                img.className = 'gif-thumb';
+                img.onclick = () => {
+                    this.selectedGif = gif.media_formats.gif.url;
+                    this.selectedMedia = null;
+                    this.showGifPreview(this.selectedGif);
+                    gifPickerModal.style.display = 'none';
+                };
+                gifResults.appendChild(img);
+            });
+        };
+        linkAddBtn.onclick = () => {
+            const url = linkUrlInput.value.trim();
+            const text = linkTextInput.value.trim();
+            if (url && text) {
+                this.links.push({ url, text });
+                this.renderLinks(linkList);
+                linkUrlInput.value = '';
+                linkTextInput.value = '';
+                linkPickerModal.style.display = 'none';
+            }
+        };
+    }
+
+    showMediaPreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('media-preview').src = e.target.result;
+            document.getElementById('media-preview').style.display = 'block';
+            document.getElementById('gif-preview').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+    showGifPreview(url) {
+        document.getElementById('gif-preview').src = url;
+        document.getElementById('gif-preview').style.display = 'block';
+        document.getElementById('media-preview').style.display = 'none';
+    }
+    renderLinks(linkList) {
+        linkList.innerHTML = '';
+        this.links.forEach((l, i) => {
+            const a = document.createElement('a');
+            a.href = l.url;
+            a.textContent = l.text;
+            a.target = '_blank';
+            linkList.appendChild(a);
+            const rm = document.createElement('span');
+            rm.textContent = ' ×';
+            rm.className = 'link-remove';
+            rm.onclick = () => {
+                this.links.splice(i, 1);
+                this.renderLinks(linkList);
+            };
+            linkList.appendChild(rm);
+            linkList.appendChild(document.createElement('br'));
+        });
+    }
+    resetMediaAndLinks() {
+        this.selectedMedia = null;
+        this.selectedGif = null;
+        this.links = [];
+        document.getElementById('media-preview').style.display = 'none';
+        document.getElementById('gif-preview').style.display = 'none';
+        document.getElementById('link-list').innerHTML = '';
     }
 
     handleTextareaInput(textarea,charCount,charCircle,postBtn){
@@ -214,8 +477,15 @@ class OpenThreadsApp {
                     <i class="bi bi-bookmark"></i>
                 </button>
             </div>
+            <div class="comments-section"></div>
+            <div class="add-comment-box">
+                <input class="comment-input" type="text" placeholder="Reply...">
+                <button class="send-comment-btn"><i class="bi bi-send"></i></button>
+            </div>
         `;
-        this.addPostInteractions(post);
+        this.addPostInteractions(post, threadObj);
+        this.renderComments(post, threadObj);
+        this.setupCommentInput(post, threadObj);
         return post;
     }
 
@@ -223,22 +493,16 @@ class OpenThreadsApp {
         const likeBtn=post.querySelector('.heart-like-button');
         const repostBtn=post.querySelector('.share-again-button');
         const bookmarkBtn=post.querySelector('.save-later-button');
-        likeBtn?.addEventListener('click',(e)=>{
+        likeBtn?.addEventListener('click',async(e)=>{
             e.preventDefault();
-            const icon=likeBtn.querySelector('i');
-            const count=likeBtn.querySelector('span');
-            const currentCount=parseInt(count.textContent);
-            if(icon.classList.contains('bi-heart')){
-                icon.classList.remove('bi-heart');
-                icon.classList.add('bi-heart-fill');
-                likeBtn.style.color='var(--danger-color)';
-                count.textContent=currentCount+1;
-            }else{
-                icon.classList.remove('bi-heart-fill');
-                icon.classList.add('bi-heart');
-                likeBtn.style.color='var(--text-muted)';
-                count.textContent=currentCount-1;
-            }
+            likeBtn.classList.add('like-anim');
+            setTimeout(()=>likeBtn.classList.remove('like-anim'),300);
+            await fetch('/api/post/like',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({thread_ID:threadObj._id})
+            });
+            this.fetchAndRenderPosts();
         });
         repostBtn?.addEventListener('click',(e)=>{
             e.preventDefault();
@@ -270,54 +534,43 @@ class OpenThreadsApp {
         });
     }
 
-    renderPosts( ){
-        const postsContainer=document.getElementById('posts-feed');
-        if(!postsContainer)return;
-        posts.forEach(postData=>{
-            const postElement=this.createPost(postData);
-            postsContainer.appendChild(postElement);
-        });
-    }
 
-    createNewPost(textarea){
-        if(!textarea||!textarea.value.trim())return;
-        const content=textarea.value.trim();
-        const hashtagRegex=/#\w+/g;
-        const hashtags=content.match(hashtagRegex)||[];
-        const newPost={
-            id:Date.now(),
-            username:"You",
-            handle:"@you",
-            avatar:"https://www.github.com/openrockets.png",
-            time:"now",
-            content:content,
-            hashtags:hashtags,
-            likes:0,
-            replies:0,
-            reposts:0,
-            verified:false
-        };
-        const postsContainer=document.getElementById('posts-feed');
-        const postElement=this.createPost(newPost);
-        postElement.style.opacity='0';
-        postElement.style.transform='translateY(-20px)';
-        postsContainer.insertBefore(postElement,postsContainer.firstChild);
-        setTimeout(()=>{
-            postElement.style.transition='all 0.3s ease';
-            postElement.style.opacity='1';
-            postElement.style.transform='translateY(0)';
-        },10);
-        textarea.value='';
-        textarea.style.height='auto';
-        const charCount=document.getElementById('charCount');
-        const charCircle=document.getElementById('charCircle');
-        const postBtn=document.getElementById('postBtn');
-        if(charCount)charCount.textContent='280';
-        if(charCircle){
-            charCircle.style.strokeDashoffset='0';
-            charCircle.style.stroke='var(--text-muted)';
+
+
+    async createNewPost(textarea) {
+        if (!textarea || !textarea.value.trim()) return;
+        const content = textarea.value.trim();
+        const spinner = document.getElementById('spinnerOverlay');
+        spinner.style.display = 'flex';
+        let res;
+        if (this.isAnonymous) {
+            res = await fetch('/api/post', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, anonymous: true, oprc_id: this.oprcId })
+            });
+        } else {
+            res = await fetch('/api/post', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
         }
-        if(postBtn)postBtn.disabled=true;
+        spinner.style.display = 'none';
+        if (res.ok) {
+            textarea.value = '';
+            textarea.style.height = 'auto';
+            const charCount = document.getElementById('charCount');
+            const charCircle = document.getElementById('charCircle');
+            const postBtn = document.getElementById('postBtn');
+            if (charCount) charCount.textContent = '280';
+            if (charCircle) {
+                charCircle.style.strokeDashoffset = '0';
+                charCircle.style.stroke = 'var(--text-muted)';
+            }
+            if (postBtn) postBtn.disabled = true;
+            await this.fetchAndRenderPosts();
+        }
     }
 }
 

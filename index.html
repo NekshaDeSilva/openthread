@@ -9,6 +9,30 @@
     <link rel="shortcut icon" href="./assets/openthread_logo_bash-trans.png" type="image/x-icon">
 </head>
 <body data-theme="dark">
+    <div class="auth-modal" id="authModal" style="display:none;">
+        <div class="auth-modal-content">
+            <div class="auth-tabs">
+                <button id="showLogin" class="auth-tab active">Login</button>
+                <button id="showRegister" class="auth-tab">Register</button>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <input type="text" id="loginUsername" placeholder="Username or Email" autocomplete="username">
+                <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+                <button type="submit" class="auth-btn">Login</button>
+                <div class="auth-error" id="loginError"></div>
+            </form>
+            <form id="registerForm" class="auth-form" style="display:none;">
+                <input type="text" id="registerUsername" placeholder="Username" autocomplete="username">
+                <input type="text" id="registerName" placeholder="Name">
+                <input type="email" id="registerEmail" placeholder="Email" autocomplete="email">
+                <input type="number" id="registerAge" placeholder="Age">
+                <input type="password" id="registerPassword" placeholder="Password" autocomplete="new-password">
+                <input type="text" id="registerContact" placeholder="Contact">
+                <button type="submit" class="auth-btn">Register</button>
+                <div class="auth-error" id="registerError"></div>
+            </form>
+        </div>
+    </div>
     <div class="wait-box-screen" id="loadingScreen">
         <div class="wait-time-logo   ">
             <img style="border-radius: 50%;" src="./assets/openthread_logo_bash-trans.png" alt="OpenThreads" class="wait-time-logo-picture">
@@ -21,6 +45,22 @@
     </div>
 
     <div class="main-app-box" id="appContainer" style="opacity: 0;">
+        <div class="media-picker-modal" id="mediaPickerModal" style="display:none;">
+            <div class="media-picker-content">
+                <input type="file" id="mediaFileInput" accept="image/*,video/*,.gif">
+                <input type="text" id="mediaLinkInput" placeholder="Paste a link">
+                <button id="mediaPickerClose">Close</button>
+                <button id="mediaPickerAdd">Add</button>
+            </div>
+        </div>
+        <div class="skeleton-loader" id="skeletonLoader" style="display:none;">
+            <div class="skeleton-post"></div>
+            <div class="skeleton-post"></div>
+            <div class="skeleton-post"></div>
+        </div>
+        <div class="spinner-overlay" id="spinnerOverlay" style="display:none;">
+            <div class="spinner"></div>
+        </div>
         <!-- Main Content Area -->
         <div class="center-stuff-content">
             <div class="post-stream-box">
@@ -41,11 +81,13 @@
                         </div>
                         
                     </div>
-                    <div class="page-switch-tabs">
-                        <button class="switch-tab-thing active">Recent</button>
-                            
-                        
-                        <button class="switch-tab-thing">Your Threads</button>
+                    <div class="page-switch-tabs" style="display: flex; align-items: center; gap: 24px;">
+                        <div style="display: flex; align-items: center;">
+                            <button class="switch-tab-thing active" id="recentTab" data-tab="recent">Recent <span class="tab-loader" style="display:none;"><span class="loader"></span></span></button>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <button class="switch-tab-thing" id="yourThreadsTab" data-tab="your">Your Threads <span class="tab-loader" style="display:none;"><span class="loader"></span></span></button>
+                        </div>
                     </div>
                 </div>
                 
@@ -91,9 +133,7 @@
                 </div>
 
                 
-                <div class="all-posts-list" id="posts-feed">
-                    <!-- Appear of posts see index.js -->
-                    </div>
+                <div class="all-posts-list" id="posts-feed"></div>
             </div>  
         </div>
     </div>

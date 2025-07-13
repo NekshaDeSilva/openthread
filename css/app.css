@@ -1,3 +1,205 @@
+/* Loader Spinner for Tabs */
+.loader {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  position: relative;
+  animation: rotate 1s linear infinite;
+  margin-left: 8px;
+  display: inline-block;
+}
+.loader::before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0px;
+  border-radius: 50%;
+  border: 5px solid #FFF;
+  animation: prixClipFix 2s linear infinite;
+}
+@keyframes rotate {
+  100%   {transform: rotate(360deg)}
+}
+@keyframes prixClipFix {
+    0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+    25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+    50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+    75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+    100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+}
+
+/* Text Skeleton Preloading Animation */
+.skeleton-text {
+  width: 80%;
+  height: 18px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  border-radius: 8px;
+  margin: 8px 0;
+  animation: skeleton 1.2s infinite linear;
+}
+/* Skeleton Loader Styles */
+.skeleton-loader {
+    width: 100%;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.skeleton-post {
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    border-radius: 16px;
+    height: 64px;
+    width: 100%;
+    animation: skeleton 1.2s infinite linear;
+}
+@keyframes skeleton {
+    0% { background-position: -200px 0; }
+    100% { background-position: 200px 0; }
+}
+
+/* Spinner Styles */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid var(--accent-color);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Media Picker Modal Styles */
+.media-picker-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+}
+.media-picker-content {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 32px 24px 24px 24px;
+    min-width: 320px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+/* Authentication Modal Styles */
+.auth-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+.auth-modal-content {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 32px 24px 24px 24px;
+    min-width: 320px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.auth-tabs {
+    display: flex;
+    width: 100%;
+    margin-bottom: 24px;
+}
+.auth-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    padding: 8px 0;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.auth-tab.active {
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--accent-color);
+}
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 0;
+}
+.auth-form input {
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.auth-form input:focus {
+    border-color: var(--accent-color);
+}
+.auth-btn {
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+.auth-btn:hover {
+    background: var(--accent-hover);
+}
+.auth-error {
+    color: var(--danger-color);
+    font-size: 0.95rem;
+    min-height: 20px;
+    margin-top: 2px;
+    text-align: center;
+}
+
+.wait-time-logo-picture {
+    border-radius: 50%;
+}
+
+.main-app-box {
+    opacity: 0;
+}
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 /*These two fonts are essential. Only use them in the future.*/
 @import url('https://fonts.googleapis.com/css2?family=Cal+Sans&family=Space+Grotesk:wght@300..700&display=swap');
