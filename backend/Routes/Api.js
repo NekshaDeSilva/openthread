@@ -1,24 +1,3 @@
-router.get("/me", async (req, res, next) => {
-    if (!req.session.user_ID) return res.status(401).json({ message: "Not authenticated" });
-    try {
-        const user = await User.findById(req.session.user_ID);
-        if (!user) return res.status(404).json({ message: "User Not Found" });
-        res.status(200).json({ user });
-    } catch (err) {
-        Log("An error occurred while fetching current user: \n" + err);
-        return res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-router.get("/user/:id", async (req, res, next) => {
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).json({ message: "User Not Found" });
-        res.status(200).json({ user });
-    } catch (err) {
-        Log("An error occurred while fetching user: \n" + err);
-        return res.status(500).json({ message: "Internal Server Error" });
-    }
-});
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
@@ -38,12 +17,64 @@ const Authenticated = (req, res, next) => {
 };
 
 
+// ==================================================== //
+// ================== General Routes ================== //
+// ==================================================== //
+
+
+router.get("/user", Authenticated, async (req, res, next) => {
+    try {
+        let user = await User.findOne({ _id: req.session.user_ID })
+            .then((user) => {
+                let { password, ...userWithoutPassword } = user.toObject();
+                res.status(200).json({ user: userWithoutPassword });
+            })
+            .catch(err => {
+            return res.status(404).json({message: "User Not Found"});
+        })
+    } catch (err) {
+        Log("An error occurred while fetching user: \n" + err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+router.get("/user/:id", Authenticated, async (req, res, next) => {
+    try {
+        let user = await User.findOne({ _id: req.params.id })
+            .then((user) => {
+                let { password, ...userWithoutPassword } = user.toObject();
+                res.status(200).json({  user: userWithoutPassword });
+            })
+            .catch(err => {
+                return res.status(404).json({message: "User Not Found"});
+            })
+    } catch (err) {
+        Log("An error occurred while fetching user: \n" + err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
 router.get("/posts", async (req, res, next) => {
     try {
-        const threads = await Thread.find({}).sort({ date: -1 });
-        res.status(200).json({ threads });
+        const threads = await Thread.find().sort({ date: -1 }).limit(25)
+        res.status(200).json({  threads: threads  });
     } catch (err) {
         Log("An error occurred while fetching threads: \n" + err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+router.get("/post/:id", Authenticated, async (req, res, next) => {
+    try {
+        const thread = await Thread.findOne({ _id: req.params.id })
+            .then((thread) => {
+                res.status(200).json({ thread: thread });
+            })
+            .catch(err => {
+                return res.status(404).json({message: "Thread Not Found"});
+            })
+    } catch (err) {
+        Log("An error occurred while fetching user: \n" + err);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
